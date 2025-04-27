@@ -1,0 +1,32 @@
+# Pull request labeler configuration
+# Automatically labels PRs based on the files changed
+
+# Dart code changes
+dart:
+  - '**/*.dart'
+  - pubspec.yaml
+  - pubspec.lock
+
+# UI changes
+ui:
+  - web/index.html
+  - web/styles.css
+
+# Docker related changes
+docker:
+  - Dockerfile
+  - .dockerignore
+
+# Configuration changes
+config:
+  - build.yaml
+  - .github/**/*
+
+# Documentation changes
+documentation:
+  - '**/*.md'
+
+# Dependencies
+dependencies:
+  - pubspec.yaml
+  - pubspec.lock
