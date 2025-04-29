@@ -36,6 +36,8 @@ resource "kubernetes_deployment" "helloworld-dart" {
       }
 
       spec {
+        service_account_name = kubernetes_service_account.helloworld-dart.metadata[0].name
+
         security_context {
           run_as_non_root = true
           run_as_user     = 101
@@ -120,5 +122,47 @@ resource "kubernetes_deployment" "helloworld-dart" {
         termination_grace_period_seconds = 30
       }
     }
+  }
+}
+
+resource "kubernetes_resource_quota" "tenant_quotas" {
+
+  metadata {
+    name      = "helloworld-dart"
+    namespace = "helloworld-dart"
+  }
+
+  spec {
+    hard = {
+      "requests.cpu"    = "1"
+      "requests.memory" = "128Mi"
+      "limits.cpu"      = "2"
+      "limits.memory"   = "128Mi"
+      "pods"            = "10"
+    }
+  }
+}
+
+resource "kubernetes_network_policy" "tenant_isolation" {
+
+  metadata {
+    name      = "helloworld-dart"
+    namespace = "helloworld-dart"
+  }
+
+  spec {
+    pod_selector {}
+
+    ingress {
+      from {
+        namespace_selector {
+          match_labels = {
+            "name" = "helloworld-dart"
+          }
+        }
+      }
+    }
+
+    policy_types = ["Ingress"]
   }
 }
